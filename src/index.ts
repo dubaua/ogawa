@@ -1,7 +1,15 @@
-import mergeOptions from '@dubaua/merge-options';
+import mergeOptions, { OptionConfig } from '@dubaua/merge-options';
 import Observable from '@dubaua/observable';
 
-const ANIMATE_OPTION_CONFIG = {
+export type AnimateOptions = {
+  duration: number;
+  delay?: number;
+  draw: (progress: number) => void;
+  onComplete?: () => void;
+  onCancel?: (progress: number) => void;
+};
+
+const ANIMATE_OPTION_CONFIG: OptionConfig<AnimateOptions> = {
   duration: {
     required: true,
     validator: (x) => typeof x === 'number' && x > 0,
@@ -32,7 +40,7 @@ const ANIMATE_OPTION_CONFIG = {
   },
 };
 
-function animate(userOptions = {}) {
+function animate(userOptions: AnimateOptions) {
   const { duration, delay, draw, onComplete, onCancel } = mergeOptions({
     optionConfig: ANIMATE_OPTION_CONFIG,
     userOptions,
@@ -42,20 +50,20 @@ function animate(userOptions = {}) {
   let lastTimestamp = performance.now();
   let progress = 0;
   let delayBuffer = 0;
-  let requestId = null;
+  let requestId: number | null = null;
 
-  const isRunning = new Observable(false);
+  const isRunning = new Observable<boolean>(false);
   isRunning.subscribe(onIsRunningChange);
   isRunning.value = true;
 
-  function tick(timestamp) {
+  function tick(timestamp: number) {
     const timeDelta = timestamp - lastTimestamp;
-    const tick = timeDelta / duration;
+    const frameTick = timeDelta / duration;
 
     if (delayBuffer < delay) {
       delayBuffer += timeDelta;
     } else {
-      progress = Math.min(1, Math.max(0, progress + tick));
+      progress = Math.min(1, Math.max(0, progress + frameTick));
       draw(progress);
     }
 
@@ -70,7 +78,7 @@ function animate(userOptions = {}) {
     }
   }
 
-  function onIsRunningChange(nextState) {
+  function onIsRunningChange(nextState: boolean) {
     if (nextState) {
       lastTimestamp = performance.now();
       requestId = window.requestAnimationFrame(tick);
@@ -78,13 +86,17 @@ function animate(userOptions = {}) {
       if (typeof onCancel === 'function' && progress !== 1 && progress !== 0) {
         onCancel(progress);
       }
-      window.cancelAnimationFrame(requestId);
+      if (requestId !== null) {
+        window.cancelAnimationFrame(requestId);
+      }
     }
   }
 
-  function togglePause(force) {
+  function togglePause(force?: boolean) {
     isRunning.value = force === undefined ? !isRunning.value : force;
   }
 
   return { togglePause };
 }
+
+export default animate;
