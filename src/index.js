@@ -13,11 +13,6 @@ const ANIMATE_OPTION_CONFIG = {
     validator: (x) => typeof x === 'number' && x >= 0,
     description: 'a non-negative number of milliseconds',
   },
-  easing: {
-    required: true,
-    validator: (x) => typeof x === 'function',
-    description: 'a function',
-  },
   draw: {
     required: true,
     validator: (x) => typeof x === 'function',
@@ -38,7 +33,7 @@ const ANIMATE_OPTION_CONFIG = {
 };
 
 function animate(userOptions = {}) {
-  const { duration, delay, easing, draw, onComplete, onCancel } = mergeOptions({
+  const { duration, delay, draw, onComplete, onCancel } = mergeOptions({
     optionConfig: ANIMATE_OPTION_CONFIG,
     userOptions,
     prefix: '[animate]:',
@@ -46,7 +41,6 @@ function animate(userOptions = {}) {
 
   let lastTimestamp = performance.now();
   let progress = 0;
-  let fraction = 0;
   let delayBuffer = 0;
   let requestId = null;
 
@@ -55,18 +49,17 @@ function animate(userOptions = {}) {
   isRunning.value = true;
 
   function tick(timestamp) {
-    const timedelta = timestamp - lastTimestamp;
-    const frametick = timedelta / duration;
+    const timeDelta = timestamp - lastTimestamp;
+    const tick = timeDelta / duration;
 
     if (delayBuffer < delay) {
-      delayBuffer += timedelta;
+      delayBuffer += timeDelta;
     } else {
-      fraction = Math.min(1, Math.max(0, fraction + frametick));
-      progress = easing(fraction);
+      progress = Math.min(1, Math.max(0, progress + tick));
       draw(progress);
     }
 
-    if (fraction === 1) {
+    if (progress === 1) {
       isRunning.value = false;
       if (typeof onComplete === 'function') {
         onComplete();
@@ -83,7 +76,7 @@ function animate(userOptions = {}) {
       requestId = window.requestAnimationFrame(tick);
     } else {
       if (typeof onCancel === 'function' && progress !== 1 && progress !== 0) {
-        onCancel({ progress, fraction });
+        onCancel(progress);
       }
       window.cancelAnimationFrame(requestId);
     }
