@@ -9,6 +9,7 @@
   "author": "dubaua",
   "license": "ISC",
   "dependencies": {
+    "@dubaua/merge-options": "^3.0.1",
     "@dubaua/observable": "^2.1.0"
   }
 }

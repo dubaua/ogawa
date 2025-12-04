@@ -1,21 +1,48 @@
+import mergeOptions from '@dubaua/merge-options';
 import Observable from '@dubaua/observable';
 
-function animate({ duration, delay, easing, draw, onComplete, onCancel }) {
-  if (typeof duration !== 'number' || duration <= 0) {
-    throw new TypeError(`animate: duration is required positive number in ms, got ${typeof duration} ${duration}`);
-  }
+const ANIMATE_OPTION_CONFIG = {
+  duration: {
+    required: true,
+    validator: (x) => typeof x === 'number' && x > 0,
+    description: 'a positive number of milliseconds',
+  },
+  delay: {
+    required: false,
+    default: 0,
+    validator: (x) => typeof x === 'number' && x >= 0,
+    description: 'a non-negative number of milliseconds',
+  },
+  easing: {
+    required: true,
+    validator: (x) => typeof x === 'function',
+    description: 'a function',
+  },
+  draw: {
+    required: true,
+    validator: (x) => typeof x === 'function',
+    description: 'a function',
+  },
+  onComplete: {
+    required: false,
+    default: undefined,
+    validator: (x) => typeof x === 'function' || x === undefined,
+    description: 'a function',
+  },
+  onCancel: {
+    required: false,
+    default: undefined,
+    validator: (x) => typeof x === 'function' || x === undefined,
+    description: 'a function',
+  },
+};
 
-  if (delay && (typeof delay !== 'number' || delay < 0)) {
-    throw new TypeError(`animate: delay should non negative number in ms, got ${typeof delay} ${delay}`);
-  }
-
-  if (typeof easing !== 'function') {
-    throw new TypeError(`animate: easing is required function, got ${typeof easing} ${easing}`);
-  }
-
-  if (typeof draw !== 'function') {
-    throw new TypeError(`animate: draw is required function, got ${typeof draw} ${draw}`);
-  }
+function animate(userOptions = {}) {
+  const { duration, delay, easing, draw, onComplete, onCancel } = mergeOptions({
+    optionConfig: ANIMATE_OPTION_CONFIG,
+    userOptions,
+    prefix: '[animate]:',
+  });
 
   let lastTimestamp = performance.now();
   let progress = 0;
