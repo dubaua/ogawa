@@ -1,44 +1,7 @@
 import mergeOptions, { OptionConfig } from '@dubaua/merge-options';
 import Observable from '@dubaua/observable';
-
-export type AnimateOptions = {
-  duration: number;
-  delay?: number;
-  draw: (progress: number) => void;
-  onComplete?: () => void;
-  onCancel?: (progress: number) => void;
-};
-
-const ANIMATE_OPTION_CONFIG: OptionConfig<AnimateOptions> = {
-  duration: {
-    required: true,
-    validator: (x) => typeof x === 'number' && x > 0,
-    description: 'a positive number of milliseconds',
-  },
-  delay: {
-    required: false,
-    default: 0,
-    validator: (x) => typeof x === 'number' && x >= 0,
-    description: 'a non-negative number of milliseconds',
-  },
-  draw: {
-    required: true,
-    validator: (x) => typeof x === 'function',
-    description: 'a function',
-  },
-  onComplete: {
-    required: false,
-    default: undefined,
-    validator: (x) => typeof x === 'function' || x === undefined,
-    description: 'a function',
-  },
-  onCancel: {
-    required: false,
-    default: undefined,
-    validator: (x) => typeof x === 'function' || x === undefined,
-    description: 'a function',
-  },
-};
+import { AnimateOptions } from './types';
+import { ANIMATE_OPTION_CONFIG } from './options';
 
 function animate(userOptions: AnimateOptions) {
   const { duration, delay, draw, onComplete, onCancel } = mergeOptions({
