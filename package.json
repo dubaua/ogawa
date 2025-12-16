@@ -1,6 +1,6 @@
 {
   "name": "ogawa",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "nano ts animation library",
   "main": "dist/ogawa.min.js",
   "source": "src/ogawa.ts",

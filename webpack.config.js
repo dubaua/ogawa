@@ -11,7 +11,6 @@ module.exports = {
     filename: 'ogawa.min.js',
     library: 'Ogawa',
     libraryTarget: 'umd',
-    libraryExport: 'default',
     globalObject: 'this',
   },
   module: {
