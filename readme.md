@@ -5,13 +5,13 @@ Tiny TypeScript helper to run simple timeline-like animations with a `draw(progr
 ## Install
 
 ```shell
-npm install @dubaua/ogawa
+npm install ogawa
 ```
 
 ## Quick start
 
 ```ts
-import Ogawa from '@dubaua/ogawa';
+import Ogawa from 'ogawa';
 
 const animation = new Ogawa({
   duration: 600,
