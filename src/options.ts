@@ -30,4 +30,10 @@ export const ANIMATE_OPTION_CONFIG: OptionConfig<AnimateOptions> = {
     validator: (x) => typeof x === 'function' || x === undefined,
     description: 'a function',
   },
+  autoStart: {
+    required: false,
+    default: true,
+    validator: (x) => typeof x === 'boolean',
+    description: 'a boolean',
+  },
 };

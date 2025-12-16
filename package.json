@@ -1,15 +1,41 @@
 {
   "name": "ogawa",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "nano ts animation library",
-  "main": "src/index.js",
+  "main": "dist/ogawa.min.js",
+  "source": "src/ogawa.ts",
+  "types": "./dist/ogawa.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/ogawa.min.js",
+      "import": "./dist/ogawa.min.js",
+      "default": "./dist/ogawa.min.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "types": "tsc --emitDeclarationOnly && api-extractor run --local",
+    "build:lib": "webpack --mode production",
+    "build": "npm run types && npm run build:lib"
   },
   "author": "dubaua",
   "license": "ISC",
   "dependencies": {
     "@dubaua/merge-options": "^3.0.1",
     "@dubaua/observable": "^2.1.0"
+  },
+  "devDependencies": {
+    "@microsoft/api-extractor": "^7.55.1",
+    "@types/node": "^24.10.1",
+    "terser-webpack-plugin": "^5.3.10",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.8.2",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^6.0.1"
   }
 }
